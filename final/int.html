@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas Game</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: #111;
+            color: white;
+        }
+        canvas {
+            background-color: #222;
+            border: 2px solid white;
+        }
+        button {
+            margin: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h2>🎮 Move the Box + Change Color</h2>
+
+<canvas id="gameCanvas" width="600" height="400"></canvas>
+
+<br>
+
+<!-- Color Buttons -->
+<button onclick="changeColor('red')">Red</button>
+<button onclick="changeColor('blue')">Blue</button>
+<button onclick="changeColor('green')">Green</button>
+<button onclick="changeColor('yellow')">Yellow</button>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+// Player Data
+const player = {
+    x: 275,
+    y: 175,
+    size: 50,
+    color: "red",
+    speed: 5
+};
+
+// Keys Object
+const keys = {};
+
+// Key Events
+window.addEventListener("keydown", (e) => {
+    keys[e.key] = true;
+});
+
+window.addEventListener("keyup", (e) => {
+    keys[e.key] = false;
+});
+
+// Change Color Function
+function changeColor(newColor) {
+    player.color = newColor;
+}
+
+// Update Function
+function update() {
+    if (keys["ArrowUp"] || keys["w"]) player.y -= player.speed;
+    if (keys["ArrowDown"] || keys["s"]) player.y += player.speed;
+    if (keys["ArrowLeft"] || keys["a"]) player.x -= player.speed;
+    if (keys["ArrowRight"] || keys["d"]) player.x += player.speed;
+}
+
+// Render Function
+function render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x, player.y, player.size, player.size);
+
+    update();
+    requestAnimationFrame(render);
+}
+
+// Start Game
+render();
+</script>
+
+</body>
+</html>
