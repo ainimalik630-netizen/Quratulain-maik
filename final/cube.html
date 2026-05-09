@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas Game</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial;
+        }
+        canvas {
+            border: 2px solid black;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Score: <span id="scoreVal">0</span></h2>
+<canvas id="gameCanvas" width="500" height="400"></canvas>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const scoreEl = document.getElementById("scoreVal");
+
+let score = 0;
+
+const player = {
+    x: 225,
+    y: 175,
+    size: 40,
+    color: "red",
+    speed: 5
+};
+
+let targets = [];
+const keys = {};
+
+// Keyboard Input
+window.addEventListener("keydown", (e) => keys[e.key] = true);
+window.addEventListener("keyup", (e) => keys[e.key] = false);
+
+// Mouse Click
+canvas.addEventListener("mousedown", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    targets = targets.filter(t => {
+        const clicked =
+            mouseX > t.x &&
+            mouseX < t.x + t.size &&
+            mouseY > t.y &&
+            mouseY < t.y + t.size;
+
+        if (clicked) {
+            score += 10;
+            scoreEl.innerText = score;
+            return false;
+        }
+        return true;
+    });
+});
+
+// Spawn Targets
+function spawnTarget() {
+    if (targets.length < 5) {
+        targets.push({
+            x: Math.random() * (canvas.width - 30),
+            y: Math.random() * (canvas.height - 30),
+            size: 30,
+            color: "blue"
+        });
+    }
+}
+setInterval(spawnTarget, 2000);
+
+// Update Player
+function update() {
+    if (keys["ArrowUp"] || keys["w"]) player.y -= player.speed;
+    if (keys["ArrowDown"] || keys["s"]) player.y += player.speed;
+    if (keys["ArrowLeft"] || keys["a"]) player.x -= player.speed;
+    if (keys["ArrowRight"] || keys["d"]) player.x += player.speed;
+
+    // Boundaries
+    player.x = Math.max(0, Math.min(canvas.width - player.size, player.x));
+    player.y = Math.max(0, Math.min(canvas.height - player.size, player.y));
+}
+
+// Render Game
+function render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw targets
+    targets.forEach(t => {
+        ctx.fillStyle = t.color;
+        ctx.fillRect(t.x, t.y, t.size, t.size);
+    });
+
+    // Draw player
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x, player.y, player.size, player.size);
+
+    update();
+    requestAnimationFrame(render);
+}
+
+render();
+</script>
+
+</body>
+</html>
