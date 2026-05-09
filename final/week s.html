@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Canvas Drawing App</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial;
+      background: #f4f4f4;
+    }
+
+    canvas {
+      border: 2px solid #333;
+      background: white;
+      cursor: crosshair;
+    }
+
+    .controls {
+      margin: 10px;
+    }
+
+    button, input {
+      padding: 8px;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>🎨 Drawing App</h2>
+
+<div class="controls">
+  <label>Brush Color:</label>
+  <input type="color" id="colorPicker" value="#000000">
+  
+  <button onclick="clearCanvas()">Clear</button>
+</div>
+
+<canvas id="canvas" width="600" height="400"></canvas>
+
+<script>
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  const colorPicker = document.getElementById("colorPicker");
+
+  let drawing = false;
+
+  // Start drawing
+  canvas.addEventListener("mousedown", (e) => {
+    drawing = true;
+    ctx.beginPath();
+    ctx.moveTo(e.offsetX, e.offsetY);
+  });
+
+  // Draw while moving mouse
+  canvas.addEventListener("mousemove", (e) => {
+    if (!drawing) return;
+
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.strokeStyle = colorPicker.value;
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.stroke();
+  });
+
+  // Stop drawing
+  canvas.addEventListener("mouseup", () => {
+    drawing = false;
+    ctx.closePath();
+  });
+
+  canvas.addEventListener("mouseleave", () => {
+    drawing = false;
+  });
+
+  // Clear canvas
+  function clearCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+</script>
+
+</body>
+</html>
